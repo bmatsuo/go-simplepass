@@ -22,15 +22,6 @@ func NewSimpleFactory(fn func() hash.Hash) *Factory {
 	}}
 }
 
-type Interface interface {
-	Hash(pass, salt []byte) ([]byte, error)
-}
-type Func func(pass, salt []byte) ([]byte, error)
-
-func (fn Func) Hash(pass, salt []byte) ([]byte, error) {
-	return fn(pass, salt)
-}
-
 func Simple(h hash.Hash) Interface {
 	return Func(func(pass, salt []byte) ([]byte, error) {
 		if h == nil {

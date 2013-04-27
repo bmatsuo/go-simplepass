@@ -58,13 +58,6 @@ import (
 	"fmt"
 )
 
-var simplepass = make(map[string]Interface, 0)
-
-func Register(name string, hash Interface) Interface {
-	simplepass[name] = hash
-	return hash
-}
-
 func Hash(name string, pass, salt []byte) ([]byte, error) {
 	h := simplepass[name]
 	if h == nil {
@@ -72,10 +65,17 @@ func Hash(name string, pass, salt []byte) ([]byte, error) {
 	}
 	return h.Hash(pass, salt)
 }
-
 func HashString(name, pass, salt string) (string, error) {
 	p, err := Hash(name, []byte(pass), []byte(salt))
 	return base64.URLEncoding.EncodeToString(p), err
+}
+func JustHash(name string, pass, salt []byte) []byte {
+	h, _ := Hash(name, pass, salt)
+	return h
+}
+func JustHashString(name string, pass, salt string) string {
+	h, _ := HashString(name, pass, salt)
+	return h
 }
 
 func Check(name string, hash, pass, salt []byte) (bool, error) {
@@ -100,14 +100,6 @@ func CheckString(name, hash, pass, salt string) (bool, error) {
 	}
 	return hash == _hash, nil
 }
-func JustHash(name string, pass, salt []byte) []byte {
-	h, _ := Hash(name, pass, salt)
-	return h
-}
-func JustHashString(name string, pass, salt string) string {
-	h, _ := HashString(name, pass, salt)
-	return h
-}
 func JustCheck(name string, hash, pass, salt []byte) bool {
 	b, _ := Check(name, hash, pass, salt)
 	return b
@@ -128,13 +120,13 @@ func Salt(n int) ([]byte, error) {
 	}
 	return p, nil
 }
-func JustSalt(n int) []byte {
-	p, _ := Salt(n)
-	return p
-}
 func SaltString(n int) (string, error) {
 	p, err := Salt(n)
 	return base64.URLEncoding.EncodeToString(p), err
+}
+func JustSalt(n int) []byte {
+	p, _ := Salt(n)
+	return p
 }
 func JustSaltString(n int) string {
 	return base64.URLEncoding.EncodeToString(JustSalt(n))

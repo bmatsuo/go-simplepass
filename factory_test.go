@@ -7,20 +7,20 @@ import (
 	"testing"
 )
 
-type TestHash struct {
+type testHash struct {
 	buf *bytes.Buffer
 	err error
 }
 
 func NewTestHash(err error) hash.Hash {
-	return &TestHash{new(bytes.Buffer), err}
+	return &testHash{new(bytes.Buffer), err}
 }
 
-func (h *TestHash) Reset() {
+func (h *testHash) Reset() {
 	h.buf = new(bytes.Buffer)
 }
 
-func (h *TestHash) Write(p []byte) (int, error) {
+func (h *testHash) Write(p []byte) (int, error) {
 	if h.err != nil {
 		return 0, h.err
 	}
@@ -28,15 +28,15 @@ func (h *TestHash) Write(p []byte) (int, error) {
 
 }
 
-func (h *TestHash) Sum(p []byte) []byte {
+func (h *testHash) Sum(p []byte) []byte {
 	return append(p, h.buf.Bytes()...)
 }
 
-func (h *TestHash) Size() int {
+func (h *testHash) Size() int {
 	return 0
 }
 
-func (h *TestHash) BlockSize() int {
+func (h *testHash) BlockSize() int {
 	return 0
 }
 
@@ -45,18 +45,18 @@ func TestTestHash(t *testing.T) { // meta
 	h := NewTestHash(nil)
 	switch n, err := h.Write([]byte("abc")); {
 	case err != nil:
-		t.Errorf("TestHash.Write retuned an error; %v", err)
+		t.Errorf("testHash.Write retuned an error; %v", err)
 	case n != 3:
-		t.Errorf("TestHash.Write did not write all the bytes; %v", n)
+		t.Errorf("testHash.Write did not write all the bytes; %v", n)
 	}
 
 	// a non-nil error causes writes to return errors
 	h = NewTestHash(fmt.Errorf("now it's broken"))
 	if _, err := h.Write([]byte("def")); err == nil {
-		t.Errorf("TestHash.Write returned success; %v", err)
+		t.Errorf("testHash.Write returned success; %v", err)
 	}
 	if _, err := h.Write([]byte("def")); err == nil {
-		t.Errorf("TestHash.Write returned success; %v", err)
+		t.Errorf("testHash.Write returned success; %v", err)
 	}
 
 	// the sum is not empty when writes are successful
