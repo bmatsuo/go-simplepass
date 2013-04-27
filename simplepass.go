@@ -110,6 +110,9 @@ func JustCheckString(name, hash, pass, salt string) bool {
 }
 
 func Salt(n int) ([]byte, error) {
+	if n == 0 {
+		n = 24
+	}
 	if n < 16 {
 		return nil, fmt.Errorf("insufficient salt length: %d", n)
 	}
