@@ -58,24 +58,12 @@ import (
 	"fmt"
 )
 
-func Hash(name string, pass, salt []byte) ([]byte, error) {
-	h := simplepass[name]
-	if h == nil {
-		return nil, fmt.Errorf("unkown hash: %q", name)
-	}
-	return h.Hash(pass, salt)
-}
-func HashString(name, pass, salt string) (string, error) {
-	p, err := Hash(name, []byte(pass), []byte(salt))
-	return base64.URLEncoding.EncodeToString(p), err
-}
-func JustHash(name string, pass, salt []byte) []byte {
-	h, _ := Hash(name, pass, salt)
-	return h
-}
-func JustHashString(name string, pass, salt string) string {
-	h, _ := HashString(name, pass, salt)
-	return h
+// Default encoding used by the String family of functions.
+var DefaultEncoding Encoding
+
+type Encoding interface {
+	EncodeToString([]byte) string
+	DecodeString(string) ([]byte, error)
 }
 
 func Check(name string, hash, pass, salt []byte) (bool, error) {
@@ -93,27 +81,17 @@ func Check(name string, hash, pass, salt []byte) (bool, error) {
 	}
 	return true, nil
 }
-func CheckString(name, hash, pass, salt string) (bool, error) {
-	_hash, err := HashString(name, pass, salt)
-	if err != nil {
-		return false, err
+func Hash(name string, pass, salt []byte) ([]byte, error) {
+	if h, ok := simplepass[name]; ok {
+		return h.Hash(pass, salt)
 	}
-	return hash == _hash, nil
+	return nil, fmt.Errorf("unkown hash: %q", name)
 }
-func JustCheck(name string, hash, pass, salt []byte) bool {
-	b, _ := Check(name, hash, pass, salt)
-	return b
-}
-func JustCheckString(name, hash, pass, salt string) bool {
-	b, _ := CheckString(name, hash, pass, salt)
-	return b
-}
-
 func Salt(n int) ([]byte, error) {
-	if n == 0 {
+	switch {
+	case n == 0:
 		n = 24
-	}
-	if n < 16 {
+	case n < 16:
 		return nil, fmt.Errorf("insufficient salt length: %d", n)
 	}
 	p := make([]byte, n)
@@ -123,14 +101,41 @@ func Salt(n int) ([]byte, error) {
 	}
 	return p, nil
 }
+
+func CheckString(name, hash, pass, salt string) (bool, error) {
+	_hash, err := HashString(name, pass, salt)
+	if err != nil {
+		return false, err
+	}
+	return hash == _hash, nil
+}
+func HashString(name, pass, salt string) (string, error) {
+	_pass, err := decodeString(pass)
+	if err != nil {
+		return "", fmt.Errorf("invalid password: %v", err)
+	}
+	_salt, err := decodeString(salt)
+	if err != nil {
+		return "", fmt.Errorf("invalid salt: %v")
+	}
+	p, err := Hash(name, _pass, _salt)
+	return encodeToString(p), err
+}
 func SaltString(n int) (string, error) {
 	p, err := Salt(n)
-	return base64.URLEncoding.EncodeToString(p), err
+	return encodeToString(p), err
 }
-func JustSalt(n int) []byte {
-	p, _ := Salt(n)
-	return p
+
+func encodeToString(p []byte) string {
+	if DefaultEncoding == nil {
+		return base64.URLEncoding.EncodeToString(p)
+	}
+	return DefaultEncoding.EncodeToString(p)
 }
-func JustSaltString(n int) string {
-	return base64.URLEncoding.EncodeToString(JustSalt(n))
+
+func decodeString(s string) ([]byte, error) {
+	if DefaultEncoding == nil {
+		return base64.URLEncoding.DecodeString(s)
+	}
+	return DefaultEncoding.DecodeString(s)
 }
