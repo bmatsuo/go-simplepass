@@ -6,11 +6,14 @@ import (
 )
 
 type Factory struct {
-	New func() Interface
+	ctor func() Interface
 }
 
 func (f *Factory) Hash(pass, salt []byte) ([]byte, error) {
-	return f.New().Hash(pass, salt)
+	if f.ctor != nil {
+		return f.ctor().Hash(pass, salt)
+	}
+	return nil, fmt.Errorf("no constructor")
 }
 
 func NewSimpleFactory(fn func() hash.Hash) *Factory {
@@ -30,11 +33,14 @@ func (fn Func) Hash(pass, salt []byte) ([]byte, error) {
 
 func Simple(h hash.Hash) Interface {
 	return Func(func(pass, salt []byte) ([]byte, error) {
+		if h == nil {
+			return nil, fmt.Errorf("no hash")
+		}
 		h.Reset()
-		if _, err := h.Write(pass); nil != err {
+		if _, err := h.Write(pass); err != nil {
 			return nil, fmt.Errorf("hashing error")
 		}
-		if _, err := h.Write(salt); nil != err {
+		if _, err := h.Write(salt); err != nil {
 			return nil, fmt.Errorf("hashing error")
 		}
 		return h.Sum(nil), nil
