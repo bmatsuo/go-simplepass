@@ -58,14 +58,16 @@ import (
 	"fmt"
 )
 
-// Default encoding used by the String family of functions.
+// Used by the String family of functions. Defaults to base64.URLEncoding
 var DefaultEncoding Encoding
 
+// Readable string encoding for binary data
 type Encoding interface {
 	EncodeToString([]byte) string
 	DecodeString(string) ([]byte, error)
 }
 
+// Validate a password against a precomputed hash.
 func Check(name string, hash, pass, salt []byte) (bool, error) {
 	p, err := Hash(name, pass, salt)
 	if err != nil {
@@ -81,12 +83,16 @@ func Check(name string, hash, pass, salt []byte) (bool, error) {
 	}
 	return true, nil
 }
+
+// Compute the hashed value of pass combined with salt
 func Hash(name string, pass, salt []byte) ([]byte, error) {
 	if h, ok := simplepass[name]; ok {
 		return h.Hash(pass, salt)
 	}
 	return nil, fmt.Errorf("unkown hash: %q", name)
 }
+
+// Generate salt with a specified entropy.
 func Salt(n int) ([]byte, error) {
 	switch {
 	case n == 0:
@@ -102,6 +108,7 @@ func Salt(n int) ([]byte, error) {
 	return p, nil
 }
 
+// See Check(). The hash, and salt values must encoded by DefaultEncoding
 func CheckString(name, hash, pass, salt string) (bool, error) {
 	_hash, err := HashString(name, pass, salt)
 	if err != nil {
@@ -109,18 +116,18 @@ func CheckString(name, hash, pass, salt string) (bool, error) {
 	}
 	return hash == _hash, nil
 }
+
+// See Hash(). The salt must be encoded by DefaultEncoding.
 func HashString(name, pass, salt string) (string, error) {
-	_pass, err := decodeString(pass)
-	if err != nil {
-		return "", fmt.Errorf("invalid password: %v", err)
-	}
 	_salt, err := decodeString(salt)
 	if err != nil {
 		return "", fmt.Errorf("invalid salt: %v")
 	}
-	p, err := Hash(name, _pass, _salt)
+	p, err := Hash(name, []byte(pass), _salt)
 	return encodeToString(p), err
 }
+
+// See Salt(). Encodes salt with DefaultEncoding.
 func SaltString(n int) (string, error) {
 	p, err := Salt(n)
 	return encodeToString(p), err

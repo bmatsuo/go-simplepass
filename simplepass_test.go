@@ -31,7 +31,7 @@ func TestSalt(t *testing.T) {
 	}
 }
 func TestHash(t *testing.T) {
-	if hashed, err := Hash("testerr", []byte("abc"), []byte("def")); err == nil{
+	if hashed, err := Hash("testerr", []byte("abc"), []byte("def")); err == nil {
 		t.Errorf("unexpected success: %x", hashed)
 	}
 	switch hashed, err := Hash("test", []byte("abc"), []byte("def")); {
@@ -43,7 +43,24 @@ func TestHash(t *testing.T) {
 }
 func TestCheck(t *testing.T) {
 	// successful check
+	switch ok, err := Check("test", []byte("abcdef"), []byte("abc"), []byte("def")); {
+	case err != nil:
+		t.Errorf("unexpected error: %v", err)
+	case !ok:
+		t.Errorf("unexpected failure: %x", JustHash("test", []byte("abc"), []byte("def")))
+	}
 	// failed check
+	switch ok, err := Check("test", []byte("ah hah!"), []byte("abc"), []byte("def")); {
+	case err != nil:
+		t.Errorf("unexpected error: %v", err)
+	case ok:
+		t.Errorf("unexpected success: %x", JustHash("test", []byte("abc"), []byte("def")))
+	}
 	// hash.Hash failure implies Check failure
-	t.Errorf("not implemented")
+	switch ok, err := Check("testerr", []byte("abcdef"), []byte("abc"), []byte("def")); {
+	case err == nil:
+		t.Errorf("unexpected error: %v", err)
+	case ok:
+		t.Errorf("unexpected success")
+	}
 }
