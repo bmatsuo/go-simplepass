@@ -8,12 +8,12 @@ import (
 
 type password struct{ hashed, salt string }
 
-var users = make(map[string]password, 0)
+var users = make(map[string]password, 0) // user datastore
 
 func register(email, pass string) {
 	salt := simplepass.JustSaltString(24)
 	hashed := simplepass.JustHashString("sha512", pass, salt)
-	users[email] = password{hashed, salt}
+	users[email] = password{hashed, salt} // stupid
 }
 
 func authenticate(email, pass string) bool {

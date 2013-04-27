@@ -3,7 +3,7 @@
 About
 =====
 
-Go-simplepass provides a common interface for salted password hashing.
+Simplepass provides a common interface for salted password hashing.
 
 Installation
 ============
@@ -13,7 +13,9 @@ Installation
 Documentation
 =============
 
-[PkgDoc][]
+[**Examples**](https://github.com/bmatsuo/go-simplepass/tree/master/examples)
+
+[**PkgDoc**][]
 
 Author
 ======
