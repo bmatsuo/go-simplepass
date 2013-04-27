@@ -30,4 +30,9 @@ func main() {
 	fmt.Println(authenticate("ya@zoo.com", "letmein"))
 	fmt.Println(authenticate("bingo@bango.com", "brute force!@#$!@"))
 	fmt.Println(authenticate("bingo@bango.com", "password"))
+
+	salt := simplepass.JustSaltString(0)
+	fmt.Println(simplepass.JustHashString("sha512", "secrets", salt))
+	fmt.Println(simplepass.JustHashString("sha256", "secrets", salt))
+	fmt.Println(simplepass.JustHashString("sha1", "secrets", salt))
 }

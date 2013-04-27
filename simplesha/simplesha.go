@@ -1,3 +1,20 @@
+/*
+This package uses the simplepass package namespace. Either use it in the place
+of github.com/bmatsuo/go-simplepass or don't import its namespace. The latter
+is preferable for portability.
+
+	import (
+		"github.com/bmatsuo/go-simplepass"
+		_ "github.com/bmatsuo/go-simplepass/simplesha"
+	)
+
+	func main() {
+		fmt.Println(simplepass.JustHashString("sha512", "dsupreme", "IDENTIFY"))
+		fmt.Println(simplepass.JustHashString("sha256", "dsupreme", "IDENTIFY"))
+		fmt.Println(simplepass.JustHashString("sha1", "dsupreme", "IDENTIFY"))
+	}
+
+*/
 package simplepass
 
 import (
