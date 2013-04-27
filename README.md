@@ -1,5 +1,3 @@
-[pkgdoc]: http://go.pkgdoc.org/github.com/bmatsuo/go-simplepass/ "PkgDoc"
-
 About
 =====
 
@@ -15,7 +13,11 @@ Documentation
 
 [**Examples**](https://github.com/bmatsuo/go-simplepass/tree/master/examples)
 
-[**PkgDoc**][]
+[**PkgDoc**](http://go.pkgdoc.org/github.com/bmatsuo/go-simplepass/)
+
+[**SHA drivers**](http://go.pkgdoc.org/github.com/bmatsuo/go-simplepass/simplesha)
+
+[**MD5 driver**](http://go.pkgdoc.org/github.com/bmatsuo/go-simplepass/simplemd5)
 
 Author
 ======
