@@ -1,4 +1,4 @@
-[pkgdoc]: http://go.pkgdoc.org/github.com/bmatsuo/simplepass/ "PkgDoc"
+[pkgdoc]: http://go.pkgdoc.org/github.com/bmatsuo/go-simplepass/ "PkgDoc"
 
 About
 =====
