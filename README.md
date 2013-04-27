@@ -1,32 +1,19 @@
-[install go]: http://golang.org/install.html "Install Go"
-[gopkgdoc]: http://go.pkgdoc.org/github.com/bmatsuo/simplepass/ "GoPkgDoc"
+[pkgdoc]: http://go.pkgdoc.org/github.com/bmatsuo/simplepass/ "PkgDoc"
 
 About
-=============
+=====
 
-<no value>
+Go-simplepass provides a common interface for salted password hashing.
+
+Installation
+============
+
+    go get github.com/bmatsuo/go-simplepass
 
 Documentation
 =============
 
-Prerequisites
--------------
-
-[Install Go][].
-
-Installation
--------------
-
-    go get github.com/bmatsuo/simplepass
-
-General Documentation
----------------------
-
-Use `go doc` to vew the documentation for go-simplepass
-
-    go doc github.com/bmatsuo/simplepass
-
-Or alternatively, check out [GoPkgDoc][]
+[PkgDoc][]
 
 Author
 ======
